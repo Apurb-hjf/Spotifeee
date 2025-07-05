@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Music App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 30px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+    }
+    .section {
+      margin: 20px 0;
+    }
+    .playlist {
+      margin-top: 30px;
+    }
+    .player {
+      margin-bottom: 25px;
+    }
+    audio {
+      width: 90%;
+    }
+    iframe {
+      width: 90%;
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎵 My Custom Music App</h1>
+
+  <div class="section">
+    <h3>📁 Add Local MP3 Songs</h3>
+    <input type="file" id="mp3Input" accept="audio/*" multiple>
+    <button onclick="addMP3Songs()">Add Songs</button>
+  </div>
+
+  <div class="section">
+    <h3>🔗 Add YouTube Song</h3>
+    <input type="text" id="ytLink" placeholder="Paste YouTube link" size="40">
+    <button onclick="addYouTubeSong()">Add YouTube Song</button>
+  </div>
+
+  <div class="playlist" id="playlist">
+    <h2>🎶 Your Playlist</h2>
+  </div>
+
+  <script>
+    const playlist = document.getElementById('playlist');
+
+    function addMP3Songs() {
+      const input = document.getElementById('mp3Input');
+      const files = input.files;
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const url = URL.createObjectURL(file);
+
+        const playerDiv = document.createElement('div');
+        playerDiv.className = 'player';
+        playerDiv.innerHTML = `
+          <strong>${file.name}</strong><br>
+          <audio controls src="${url}"></audio>
+        `;
+        playlist.appendChild(playerDiv);
+      }
+
+      // Reset file input so you can re-add same file later if needed
+      input.value = '';
+    }
+
+    function addYouTubeSong() {
+      const link = document.getElementById('ytLink').value.trim();
+      const videoId = extractYouTubeID(link);
+
+      if (videoId) {
+        const playerDiv = document.createElement('div');
+        playerDiv.className = 'player';
+        playerDiv.innerHTML = `
+          <iframe src="https://www.youtube.com/embed/${videoId}" 
+                  frameborder="0" allowfullscreen></iframe>
+        `;
+        playlist.appendChild(playerDiv);
+        document.getElementById('ytLink').value = '';
+      } else {
+        alert('Please enter a valid YouTube link.');
+      }
+    }
+
+    function extractYouTubeID(url) {
+      const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\&\?]+)/;
+      const match = url.match(regex);
+      return match ? match[1] : null;
+    }
+  </script>
+</body>
+</html>
